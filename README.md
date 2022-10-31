@@ -1,13 +1,32 @@
-# Sample Hardhat Project
+# NFT Marketplace
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Rename .env.example to .env and put your private key, the rpc url and your etherscan API key.
 
-Try running some of the following tasks:
+## Scripts 
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
 ```
+yarn hardhat deploy 
+```
+
+Deploy on local network
+
+
+```
+yarn hardhat deploy --network goerli
+```
+
+Deploy on goerli network and verify automaticaly the smart contract
+
+
+```
+yarn hardhat test
+```
+
+Run all the tests 
+
+
+```
+yarn hardhat coverage
+```
+
+Check the coverage of the tests
