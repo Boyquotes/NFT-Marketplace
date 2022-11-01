@@ -2,6 +2,10 @@
 
 Rename .env.example to .env and put your private key, the rpc url and your etherscan API key.
 
+## Infos 
+
+* The tests have a 100% coverage
+
 ## Scripts 
 
 ### Deploy on local network
