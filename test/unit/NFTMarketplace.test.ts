@@ -28,10 +28,35 @@ import { NFTMarketplace } from '../../typechain-types/contracts/NFTMarketplace';
         assert.equal(listingPriceToString, expectedPrice)
       })
 
+      it('should not mint a NFT and list it in the marketplace if the price is null', async function() {
+        await expect(NFTMarketplace.createToken('ipfs://CID/file.json', ethers.utils.parseEther('0'), {value: ethers.utils.parseEther('0.025')})).to.be.revertedWithCustomError(
+          NFTMarketplace,
+          "NFTMarketplace__PriceIsNull"
+        )
+      })
+
+      it('should not mint a NFT and list it in the marketplace if listing price is not paid', async function() {
+        await expect(NFTMarketplace.createToken('ipfs://CID/file.json', ethers.utils.parseEther('1'), {value: ethers.utils.parseEther('0')})).to.be.revertedWithCustomError(
+          NFTMarketplace,
+          "NFTMarketplace__ListingPriceNotMet"
+        )
+      })
+
       it('should mint a NFT and list it in the marketplace', async function() {
         await expect(NFTMarketplace.createToken('ipfs://CID/file.json', ethers.utils.parseEther('1'), {value: ethers.utils.parseEther('0.025')})).to.emit(
           NFTMarketplace,
           "MarketItemCreated"
+        )
+      })
+
+      it('should update the listing price', async function() {
+        await NFTMarketplace.updateListingPrice(ethers.utils.parseEther('0.025'))
+      })
+
+      it('should not be possible to update the listing price if not the owner', async function() {
+        await expect(NFTMarketplace.connect(accounts[1]).updateListingPrice(ethers.utils.parseEther('0.05'))).to.be.revertedWithCustomError(
+          NFTMarketplace,
+          "NFTMarketplace__NotTheOwner"
         )
       })
 
@@ -55,6 +80,13 @@ import { NFTMarketplace } from '../../typechain-types/contracts/NFTMarketplace';
         assert.equal(fetchMarketItems[0].sold, false)
       })
 
+      it('should not buy a NFT because not enough ethers provided', async function() {
+        await expect(NFTMarketplace.connect(accounts[1]).createMarketSale(1, { value: ethers.utils.parseEther('0.5')})).to.be.revertedWithCustomError(
+          NFTMarketplace,
+          "NFTMarketplace__SalePriceNotMet"
+        )
+      })
+
       it('should buy a NFT', async function() {
         await NFTMarketplace.connect(accounts[1]).createMarketSale(1, { value: ethers.utils.parseEther('1')})
         let NFTsOwnedByAccount1 = await NFTMarketplace.connect(accounts[1]).fetchMyNFTs()
@@ -65,6 +97,22 @@ import { NFTMarketplace } from '../../typechain-types/contracts/NFTMarketplace';
         assert.equal(NFTsOwnedByAccount1[0].price.toString(), '1000000000000000000')
         assert.equal(NFTsOwnedByAccount1[0].sold, true)
       })
+
+      it('should not be possible to resell an NFT if not the owner', async function() {
+        await expect(NFTMarketplace.connect(accounts[2]).resellToken(1, ethers.utils.parseEther('1'), { value: ethers.utils.parseEther('0.025')})).to.be.revertedWithCustomError(
+          NFTMarketplace,
+          "NFTMarketplace__NotNftOwner"
+        )
+      })
+
+      it('should not be possible to resell an NFT if not the owner', async function() {
+        await expect(NFTMarketplace.connect(accounts[1]).resellToken(1, ethers.utils.parseEther('1'), { value: ethers.utils.parseEther('0.020')})).to.be.revertedWithCustomError(
+          NFTMarketplace,
+          "NFTMarketplace__ListingPriceNotMet"
+        )
+      })
+
+      //NFTMarketplace__ListingPriceNotMet
 
       it('should resell an NFT', async function() {
         await NFTMarketplace.connect(accounts[1]).resellToken(1, ethers.utils.parseEther('1'), { value: ethers.utils.parseEther('0.025')})
