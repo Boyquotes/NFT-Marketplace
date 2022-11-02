@@ -1,6 +1,6 @@
 # NFT Marketplace
 
-Rename .env.example to .env and put your private key, the rpc url and your etherscan API key.
+Rename .env.example to .env and put your private key, the rpc url and your etherscan API key
 
 ## Infos 
 
