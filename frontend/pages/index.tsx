@@ -50,12 +50,30 @@ export default function Home() {
           image: image,
           description: description,
           tokenId: id,
-          price: price
+          price: price,
+          seller: nft.seller,
+          owner: nft.owner,
         }
       })
       return object
     }))
     setNfts(items)
+  }
+
+  async function buyNft(nft) {
+    /* needs the user to sign the transaction, so will use Web3Provider and sign it */
+    const web3Modal = new Web3Modal()
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(marketContractAddress, Contract.abi, signer)
+
+    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')   
+    const transaction = await contract.createMarketSale(nft.tokenId, {
+      value: price
+    })
+    await transaction.wait()
+    loadNFTs()
   }
 
   return(
@@ -102,7 +120,7 @@ export default function Home() {
                             <Text fontWeight="bold" as="span">{nft.price}</Text> <Text as="span">Eth</Text>
                           </Badge>
                         </Box>
-                        <Button mt='1rem' colorScheme='purple' width='100%' size='lg'>
+                        <Button mt='1rem' colorScheme='purple' width='100%' size='lg' onClick={() => buyNft(nft)}>
                           Buy
                         </Button>
                       </Box>
