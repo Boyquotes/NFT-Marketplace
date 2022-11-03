@@ -1,8 +1,9 @@
 import { network } from "hardhat"
 import { networkConfig, developmentChains } from "../helper-hardhat-config"
 import { verify } from "../utils/verify"
-import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import {DeployFunction} from 'hardhat-deploy/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { ethers } from 'ethers'
 
 let args: any = []
 

@@ -20,7 +20,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f0f8ff;
+  background: #e9d8fd;
   color: rgb(52, 52, 53);
 }
 
@@ -35,6 +35,19 @@ a {
 .body {
   color: rgb(52, 52, 53);
   padding: 2rem;
+}
+
+.nftList {
+  padding: 2rem;
+  display: flex;
+}
+
+.nftList img {
+  max-height: 300px;
+}
+
+.nftListElement {
+  padding: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
